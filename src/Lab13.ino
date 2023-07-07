@@ -5,15 +5,13 @@ SYSTEM_THREAD(ENABLED);
 
 void callback(char *topic, byte *payload, unsigned int length);
 MQTT client("lab.thewcl.com", 1883, callback);
-double value;
-String s;
 
 double latitude = 0;
 double longitude = 0;
 
+
 //used to check the topic of mqtt callback
 String theTopic = "benlab13/latitude";
-String callbackTopic;
 
 bool timer_active = false;
 
@@ -69,10 +67,10 @@ void callback(char *topic, byte *payload, unsigned int length) {
   char p[length + 1];
   memcpy(p, payload, length);
   p[length] = NULL;
-  s = p;
-  value = s.toFloat();
+  String s = p;
+  double value = s.toFloat();
 
-  callbackTopic = topic; //makes the mqtt topic of the data into an arduino string
+  String callbackTopic = topic; //makes the mqtt topic of the data into an arduino string
 
   if (theTopic.compareTo(callbackTopic)) {
     latitude = value;

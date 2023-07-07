@@ -16,14 +16,15 @@ SYSTEM_THREAD(ENABLED);
 
 void callback(char *topic, byte *payload, unsigned int length);
 MQTT client("lab.thewcl.com", 1883, callback);
-double value;
-String s;
 
 double latitude = 0;
 double longitude = 0;
 
-  String theTopic = "benlab13/latitude";
-  String callbackTopic;
+double value;
+String s;
+
+//used to check the topic of mqtt callback
+String theTopic = "benlab13/latitude";
 
 bool timer_active = false;
 
@@ -42,16 +43,13 @@ void setup() {
 
 void loop() {
 
-
-
-
   display.loop();
 
   if (client.isConnected())
   {
-    //mantains client
     client.loop();
     if (!timer_active) {
+      //sends a message to node red to do an api request every 2 seconds
       timer.start();
       timer_active = true;
       client.publish("benLab13/sendrequest", "0");
@@ -76,29 +74,24 @@ void loop() {
 
 }
 
-
-
-
 void callback(char *topic, byte *payload, unsigned int length) {
 
-  //Serial.print(payload)
+  //formats and extracts data from mqtt 
   char p[length + 1];
   memcpy(p, payload, length);
   p[length] = NULL;
   s = p;
   value = s.toFloat();
 
-
-  callbackTopic = topic; //makes the mqtt topic of the data into an arduino string
+  String callbackTopic = topic; //makes the mqtt topic of the data into an arduino string
 
   if (theTopic.compareTo(callbackTopic)) {
     latitude = value;
   } else {
     longitude = value;
   }
-}
 
-  
+}
 
 void format_display () {
   //sets up basic formatting for when using the display
